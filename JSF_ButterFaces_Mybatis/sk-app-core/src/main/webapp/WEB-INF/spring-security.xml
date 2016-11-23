@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/security 
+                           http://www.springframework.org/schema/security/spring-security-3.2.xsd
+                           http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context 
+                           http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+    <context:annotation-config />
+    <context:spring-configured />
+    <sec:global-method-security pre-post-annotations="enabled" />
+
+    <sec:http auto-config="true" use-expressions="true">
+        <sec:intercept-url pattern="/javax.faces.resource/**" access="permitAll" />
+        <!-- page level security -->
+
+        <sec:intercept-url pattern="/pages/secure/**" access="hasRole('MODERATOR')" />
+        <sec:intercept-url pattern="/pages/unsecure/**" access="permitAll" />
+        <sec:intercept-url pattern="/**" access="hasRole('VIEWER')" />
+
+        <sec:form-login login-page="/pages/unsecure/login.xhtml" />
+    <sec:logout invalidate-session="true" delete-cookies="true" logout-success-url="/" />
+
+    </sec:http>
+
+    <sec:authentication-manager alias="authenticationManager">
+        <sec:authentication-provider user-service-ref="userLoginService">
+            <sec:password-encoder hash="plaintext"></sec:password-encoder>
+        </sec:authentication-provider>
+    </sec:authentication-manager>
+
+</beans>
